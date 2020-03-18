@@ -14,3 +14,6 @@ Type "python3 app.py" in Terminal
 * Then login to view the stocks 
 * Add/remove stocks watchlist
 * Choose an option (Daily,Weekly,Monthly)
+
+# Worked pictures
+ You can see screenshots(all the pages of the web app) in the folder screenshots
