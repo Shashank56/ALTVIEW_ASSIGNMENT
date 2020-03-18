@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+      <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+      <script src="https://unpkg.com/d3fc/build/d3fc.min.js"></script>
+      <script src="https://d3js.org/d3-time.v1.min.js"></script>
+      <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+      <!-- <script src="jquery-3.4.1.min.js"></script> -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+   </head>
+
+   <body>
+      <h3> D3.js Requests API </h3>
+      <div class="button dropdown"> 
+        <select id="selector">
+           <option value = "select">select</option> 
+           <option value="daily">daily</option>
+           <option value="weekly">weekly</option>
+           <option value="monthly">monthly</option>
+        </select>
+      </div>
+      
+      <div class="output">
+        <div id="daily" class= "colors red" style="width: 100%; height: 500px; "></div>
+        <div id="weekly" class="colors yellow" style="width: 100%; height: 500px; "></div>
+        <div id="monthly" class="colors blue" style="width: 100%; height: 500px; "></div>
+      </div>
+      <!-- <div id="monthly" style="width: 100%; height: 500px;"></div>
+      <div id="weekly" style="width: 100%; height: 500px;"></div>
+      <div id="daily" style="width: 100%; height: 500px;"></div> -->
+
+      <script>
+        var parseDate = d3.timeFormat("%Y-%m-%d");
+        // k = d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo");
+        const weekly_data = d3.csv("/static/data/weekly.csv", d => ({
+          date: new Date(d.timestamp),
+          volume: Number(d.volume),
+          high: Number(d.high),
+          low: Number(d.low),
+          open: Number(d.open),
+          close: Number(d.close)    
+        }));
+
+        const monthly_data = d3.csv("/static/data/monthly.csv", d => ({
+          date: new Date(d.timestamp),
+          volume: Number(d.volume),
+          high: Number(d.high),
+          low: Number(d.low),
+          open: Number(d.open),
+          close: Number(d.close)    
+        }));
+
+        const daily_data = d3.csv("/static/data/daily.csv", d => ({
+          date: new Date(d.timestamp),
+          volume: Number(d.volume),
+          high: Number(d.high),
+          low: Number(d.low),
+          open: Number(d.open),
+          close: Number(d.close)    
+        }));
+
+    weekly_data.then(data =>{
+            console.log(data); 
+        
+        
+        const xExtent = fc.extentDate()
+          .accessors([d => d.date]);
+        const yExtent = fc.extentLinear()
+          .pad([0.1, 0.1])
+          .accessors([d => d.high, d => d.low]);
+        
+        const lineSeries = fc
+          .seriesSvgLine()
+          .mainValue(d => d.high)
+          .crossValue(d => d.date);
+
+        const chart = fc
+          .chartCartesian(d3.scaleTime(), d3.scaleLinear())
+          .yOrient("right")
+          .yDomain(yExtent(data))
+          .xDomain(xExtent(data))
+          .svgPlotArea(lineSeries);
+
+        d3.selectAll("#weekly")
+          .datum(data)
+          .call(chart);
+    
+        });
+
+    monthly_data.then(data =>{
+            console.log(data); 
+        
+        
+        const xExtent = fc.extentDate()
+          .accessors([d => d.date]);
+        const yExtent = fc.extentLinear()
+          .pad([0.1, 0.1])
+          .accessors([d => d.high, d => d.low]);
+        
+        const lineSeries = fc
+          .seriesSvgLine()
+          .mainValue(d => d.high)
+          .crossValue(d => d.date);
+
+        const chart = fc
+          .chartCartesian(d3.scaleTime(), d3.scaleLinear())
+          .yOrient("right")
+          .yDomain(yExtent(data))
+          .xDomain(xExtent(data))
+          .svgPlotArea(lineSeries);
+
+        d3.selectAll("#monthly")
+          .datum(data)
+          .call(chart);
+    
+        });
+
+    daily_data.then(data =>{
+            console.log(data); 
+        
+        
+        const xExtent = fc.extentDate()
+          .accessors([d => d.date]);
+        const yExtent = fc.extentLinear()
+          .pad([0.1, 0.1])
+          .accessors([d => d.high, d => d.low]);
+        
+        const lineSeries = fc
+          .seriesSvgLine()
+          .mainValue(d => d.high)
+          .crossValue(d => d.date);
+
+        const chart = fc
+          .chartCartesian(d3.scaleTime(), d3.scaleLinear())
+          .yOrient("right")
+          .yDomain(yExtent(data))
+          .xDomain(xExtent(data))
+          .svgPlotArea(lineSeries);
+
+        d3.selectAll("#daily")
+          .datum(data)
+          .call(chart);
+    
+        });
+
+    $(function() {
+        $('#selector').change(function(){
+            $('.colors').hide();
+            $('#' + $(this).val()).show();
+        });
+    });
+      </script>
+   </body>
+</html>
